@@ -1,0 +1,25 @@
+﻿using ParkingContext.Models;
+using ParkingModel;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ParkingContext
+{
+    public interface IRepositoryUsuario
+    {
+        void Add<T>(T entity) where T : class;
+        void Update<T>(T entity) where T : class;
+
+        void Delete<T>(T entity) where T : class;
+
+        Task<bool> SaveChangesAsync();
+        Task<List<PatioEstacionamento>> GetAllCars();
+        Task<PatioEstacionamento> GetCarById(string placa);
+        Task<bool> Adiciona(AdicionaPatio model);
+        Task<bool> Atualiza(string placa, AdicionaPatio model);
+        Task<bool> Remove(string placa);
+
+    }
+}
