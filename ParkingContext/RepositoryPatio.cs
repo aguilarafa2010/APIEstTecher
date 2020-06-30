@@ -42,11 +42,12 @@ namespace ParkingContext
 
         //FUNÇÕES DE MANIPULAÇÃO
 
-        public async Task<List<PatioEstacionamento>> GetAllCars()
+        public async Task<List<Patio>> GetAllCars()
         {
-            var query = await _context.PastioEstacionamento
+            var query = await _context.Patio
                 .Where(a => a.Excluido != true)
-                .OrderByDescending(car => car.Entrada)
+                .Include(a => a.Informacoes)
+                .OrderByDescending(car => car.HoraEntrada)
                 .ToListAsync();
 
             if (query == null)
@@ -57,9 +58,9 @@ namespace ParkingContext
             return query;
         }
 
-        public async Task<PatioEstacionamento> GetCarById(string placa)
+        public async Task<Patio> GetCarById(string placa)
         {
-            var query = await _context.PastioEstacionamento
+            var query = await _context.Patio
                 .Where(a => a.Placa == placa)
                 .FirstOrDefaultAsync();
 
@@ -74,13 +75,14 @@ namespace ParkingContext
 
         public async Task<bool> Adiciona(AdicionaPatio model)
         {
-            var patio = new PatioEstacionamento
+            var patio = new Patio
             {
-                Entrada = new Guid(),
+                Cpf = model.Cpf,
                 Placa = model.Placa,
                 HoraEntrada = DateTime.Now,
                 Vaga = model.Vaga,
-                Mensalista = model.Mensalista
+                Mensalista = model.Mensalista,
+                Informacoes = model.Informacoes
             };
 
             _context.Add(patio);
@@ -93,7 +95,7 @@ namespace ParkingContext
         public async Task<bool> Atualiza(string placa, AdicionaPatio model)
         {
 
-            var carro = await _context.PastioEstacionamento
+            var carro = await _context.Patio
                 .Where(a => a.Placa == placa)
                 .FirstOrDefaultAsync();
 
@@ -114,7 +116,7 @@ namespace ParkingContext
 
         public async Task<bool> Remove(string placa)
         {
-            var remover = await _context.PastioEstacionamento
+            var remover = await _context.Patio
                 .Where(a => a.Placa == placa)
                 .FirstOrDefaultAsync();
 

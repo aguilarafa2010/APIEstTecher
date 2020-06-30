@@ -24,15 +24,13 @@ namespace ParkingWebApi.Controller
         }
 
         [HttpGet]
-        public async Task<List<PatioEstacionamento>> Get()
+        public async Task<List<Patio>> Get()
         {
-
             return await this.repo.GetAllCars();
-
         }
  
         [HttpGet("{placa}")]
-        public async Task<PatioEstacionamento> BuscaId(string placa)
+        public async Task<Patio> BuscaId(string placa)
         {
                 return await this.repo.GetCarById(placa);
         }

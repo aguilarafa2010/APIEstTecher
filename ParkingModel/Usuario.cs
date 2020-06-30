@@ -9,14 +9,15 @@ namespace ParkingModel
     public class Usuario
     {
         [Key]
-        public Guid UsuarioId { get; set; }
+        public int UsuarioId { get; set; }
         [Required]
         public string Cpf { get; set; }
         [Required]
+        [Column("NomesCompleto")]
         public string NomeCompleto { get; set; }
-        [Required]
+
         public string Email { get; set; }
-        [Required]
+        public string Telefone { get; set; }
         public DateTime DataNascimento { get; set; }
         [NotMapped]
         public int Idade

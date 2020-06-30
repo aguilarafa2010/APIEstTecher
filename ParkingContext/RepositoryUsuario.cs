@@ -42,114 +42,92 @@ namespace ParkingContext
 
         //FUNÇÕES DE MANIPULAÇÃO
 
-        public async Task<List<PatioEstacionamento>> GetAllCars()
+        public async Task<List<Usuario>> BuscaGeral()
         {
-            var query = await _context.PastioEstacionamento
-                .Where(a => a.Excluido != true)
-                .OrderByDescending(car => car.Placa)
+            var query = await _context.Usuario
+                .Include(e => e.Carros)
                 .ToListAsync();
 
-            if (query == null)
-            {
-                throw new System.InvalidOperationException("Não existem veículos no estacionamento.");
-            }
-
             return query;
         }
 
-        public async Task<PatioEstacionamento> GetCarById(string placa)
+        public async Task<UsuarioBusca> Busca(string cpf)
         {
-            var query = await _context.PastioEstacionamento
-                .Where(a => a.Placa == placa)
+            var query = await _context.Usuario
+                .Where(a => a.Cpf == cpf)
+                .Select(a => new { 
+                    a.NomeCompleto,
+                    a.Idade,
+                    a.Telefone
+                })
                 .FirstOrDefaultAsync();
-
+            
+            
             if (query == null)
             {
-                throw new System.InvalidOperationException("O Veículo não foi encontrado!");
+                throw new System.InvalidOperationException("O usuário não foi encontrado!");
             }
 
-            return query;
-        }
-
-
-        public async Task<bool> Adiciona(AdicionaPatio model)
-        {
-            var patio = new PatioEstacionamento
+            var usuario = new UsuarioBusca
             {
-                Placa = model.Placa,
-                HoraEntrada = DateTime.Now,
-                Vaga = model.Vaga,
-                Mensalista = model.Mensalista
+                NomeCompleto = query.NomeCompleto,
+                Idade = query.Idade,
+                Telefone = query.Telefone
             };
 
-            _context.Add(patio);
-
-            await _context.SaveChangesAsync();
-
-            return true;
+            return usuario;
         }
 
-        public async Task<bool> Atualiza(string placa, AdicionaPatio model)
+
+        public async Task<bool> Adiciona(Usuario model)
         {
 
-            var carro = await _context.PastioEstacionamento
-                .Where(a => a.Placa == placa)
+            var busca = await _context.Usuario
+                .Where(a => a.Cpf == model.Cpf)
                 .FirstOrDefaultAsync();
 
-            if (carro == null)
+            if (busca != null)
             {
-                throw new System.InvalidOperationException("O Veículo não foi encontrado!");
+                throw new System.InvalidOperationException("Esse usuário já possui cadastro!");
             }
 
+            var usuario = new Usuario
+            {
+                Cpf = model.Cpf,
+                NomeCompleto = model.NomeCompleto,
+                DataNascimento = model.DataNascimento,
+                Email = model.Email,
+                Telefone = model.Telefone,
+                Carros = model.Carros
+            };
 
-            carro.Vaga = model.Vaga;
-            carro.Mensalista = model.Mensalista;
-            //carro.Info.AddRange(model.Informacoes);
+            _context.Add(usuario);
 
             await _context.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<bool> Remove(string placa)
+        public async Task<bool> Atualiza(string cpf, Usuario model)
         {
-            var remover = await _context.PastioEstacionamento
-                .Where(a => a.Placa == placa)
-                .Select(a => new RemoverModel
-                {
-                    Excluido = a.Excluido,
-                    HoraSaida = a.HoraSaida,
-                    HoraEntrada = a.HoraEntrada,
-                    ValorFinal = a.ValorFinal
-                }).FirstOrDefaultAsync();
 
-            if (remover == null)
+            var usuario = await _context.Usuario
+                .Where(a => a.Cpf == cpf)
+                .FirstOrDefaultAsync();
+
+            if (usuario == null)
             {
-                throw new System.InvalidOperationException("O Veículo não foi encontrado!");
+                throw new System.InvalidOperationException("O usuário não foi encontrado!");
             }
 
-            remover.Excluido = true;
-            remover.HoraEntrada = DateTime.Now;
-
-            remover.ValorFinal = Calcula(remover.HoraEntrada, remover.HoraSaida);
+            usuario.NomeCompleto = model.NomeCompleto;
+            usuario.DataNascimento = model.DataNascimento;
+            usuario.Email = model.Email;
+            usuario.Carros = model.Carros;
 
             await _context.SaveChangesAsync();
 
             return true;
         }
-
-        public double Calcula(DateTime entrada, DateTime saida)
-        {
-
-            var horaEntrada = entrada.Hour * 60 + entrada.Minute;
-            var horaSaida = saida.Hour * 60 + saida.Minute;
-
-            var valorFinal = Convert.ToDouble(((horaSaida - horaEntrada) / 30) * 5);
-
-
-
-            return valorFinal;
-        }
-
     }
 }

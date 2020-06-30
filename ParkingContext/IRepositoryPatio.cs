@@ -15,8 +15,8 @@ namespace ParkingContext
         void Delete<T>(T entity) where T : class;
 
         Task<bool> SaveChangesAsync();
-        Task<List<PatioEstacionamento>> GetAllCars();
-        Task<PatioEstacionamento> GetCarById(string placa);
+        Task<List<Patio>> GetAllCars();
+        Task<Patio> GetCarById(string placa);
         Task<bool> Adiciona(AdicionaPatio model);
         Task<bool> Atualiza(string placa, AdicionaPatio model);
         Task<bool> Remove(string placa);

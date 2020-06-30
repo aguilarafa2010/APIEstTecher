@@ -9,10 +9,10 @@ namespace ParkingModel
     public class Conferencia
     {
         [Key]
-        public int Inf { get; set; }
+        public int Inf_Id { get; set; }
         public string Informacoes { get; set; }
-        [ForeignKey(nameof(Carro))]
-        public Guid CarroId { get; set; }
-        public Carro Carro { get; set; }
+        [ForeignKey(nameof(Patio))]
+        public int Patio_Id { get; set; }
+        public Patio Patio { get; set; }
     }
 }
