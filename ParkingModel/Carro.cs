@@ -8,8 +8,6 @@ namespace ParkingModel
     [Table("Carros")]
     public class Carro
     {
-        [Key]
-        [Column("Carro_Id")]
         public int CaroId { get; set; }
         public string Placa { get; set; }
         public string Marca { get; set; }

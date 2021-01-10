@@ -9,9 +9,7 @@ namespace ParkingModel
 {
     public class Patio
     {
-        [Key]
         public int Patio_Id { get; set; }
-        [Column("Cpf_Id")]
         public string Cpf { get; set; }
         public string Placa { get; set; }
         public int Vaga { get; set; }
