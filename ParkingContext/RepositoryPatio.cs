@@ -52,7 +52,7 @@ namespace ParkingContext
 
             if (query == null)
             {
-                throw new System.InvalidOperationException("Não existem veículos no estacionamento.");
+                throw new System.InvalidOperationException("Não existem veículos no  estacionamento.");
             }
 
             return query;
